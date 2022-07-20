@@ -1,38 +1,30 @@
 #include<iostream>
 #include<stack>
+#include<algorithm>
+#include<vector>
 using namespace std;
 
-void stockSpan(int prices[], int n, int span[]){
-    stack <int> s;
-    s.push(0);
-    span[0] = 1;
-    // loop for the rest of days O(n) -> push and pop each element only once
-    for(int i = 1; i <= n-1; i++){
-        int currentPrice = prices[i];
-        //topmost element higher tha current price
-        while (!s.empty() and prices[s.top()] <= currentPrice)
-        {
+vector<int> stockSpan(vector<int> prices, int n){
+    vector<int> span;
+    stack<pair<int,int>> s;
+    for(auto price: prices){
+        int days = 1;
+        while(!s.empty() and s.top().first <= price){
+            days += s.top().second;
             s.pop();
         }
-        if(!s.empty()){
-            int prevHighest =  s.top();
-            span[i] = i - prevHighest;
-        }
-        else{
-            span[i] = i+1;
-        }
-        //push this element back into stack 
-        s.push(i);
+        s.push({price,days});
+        span.push_back(days);
     }
+    return span;
 }
 
 int main(){
-    int prices[] = {100, 80, 60, 70, 60, 75, 85};
-    int n = sizeof(prices)/sizeof(int);
-    int span[100000] = {0};
-    stockSpan(prices, n ,span);
+    vector<int> prices = {100, 80, 60, 70, 60, 75, 85};
+    int n = prices.size();
+    vector<int> ans = stockSpan(prices, n );
     for(int i = 0; i < n; i++){
-        cout<<span[i]<<" ";
+        cout<<ans[i]<<" ";
     }
     return 0;
 }
