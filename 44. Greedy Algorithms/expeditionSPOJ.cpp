@@ -4,80 +4,62 @@
 #include<algorithm>
 using namespace std;
 
-bool compare(pair<int, int> p1, pair<int, int> p2){
-    return p1.first > p2.first;
-}
 
 int main(){
-    int n, t, x, d, f, D, F, prev = 0;
-    cin>>t;
-    while(t--){
-        int flag = 0;
-        int ans = 0;
-        vector<pair<int, int>> v;
-        priority_queue<int> pq;
-        cin>>n;
+    int n;
+    cin>>n;
+    vector<pair<int,int>> a(n);
+    for(int i = 0; i < n; i++){
+        cin>>a[i].first>>a[i].second;
+    }
 
-        for(int i = 0; i < n; i++){
-            cin>>d>>f;
-            v.push_back(make_pair(d, f));
+    int l,p;
+    cin>>l>>p;
+    for(int i = 0; i < n; i++){
+        a[i].first = l - a[i].first;
+    } 
+
+    sort(a.begin(),a.end());
+
+    int ans = 0;
+    int curr = p;
+
+    priority_queue<int> pq;
+    int flag = 0;
+
+    for(int i =0; i < n; i++){
+        if(curr >= l){
+            break;
         }
-        sort(v.begin(), v.end(), compare);
-        cin>>D>>F;
-        for(int i = 0; i < n; i++){
-            v[i].first = D-v[i].first;
-        }
-        prev = 0;//denotes the previous city we have visited
-        x = 0;//current city
-        while(x < n){
-            //if we have enough fuel to go to next city
-            if(F >= (v[x].first-prev)){
-                F = F-(v[x].first-prev);
-                pq.push(v[x].second);
-                prev=v[x].first;
-            }
-            else{
-                //check if you have some fueling stations visited in the priority queue
-                if(pq.empty()){
-                    flag = 1;
-                    break;
-                }
-                //otherwise refuel the truck with fuel stations with higher capacity
-                F += pq.top();
-                //Remove the fuel station from priority queue
-                pq.pop();
-                ans += 1;
-                continue;
-            }
-            x++;
-        }
-        //actually travelled through n fuel stations
-        //what is left you have reach the town from the last fuel station
-        if(flag == 1){
-            cout<<-1<<endl;
-            continue;
-        } 
-        //otherwise
-        D = D - v[n-1].first;
-        if(F >= D){
-            cout<<ans<<endl;
-            continue;
-        }
-        //otherwise
-        while(F < D){
+        while(curr < a[i].first){
             if(pq.empty()){
-                flag = 1;
+                flag = -1;
                 break;
             }
-            F += pq.top();
+            ans++;
+            curr += pq.top();
             pq.pop();
-            ans += 1;
         }
         if(flag == 1){
-            cout<<-1<<endl;
-            continue;
+            break;
         }
-        cout<<ans<<endl;
+        pq.push(a[i].second);
     }
+
+    if(flag == 1){
+        cout<<"-1";
+        return 0;
+    }
+
+    while(!pq.empty() and curr<l){
+        curr += pq.top();
+        pq.pop();
+        ans++;
+    }
+    if(curr < l){
+        cout<<"-1"<<endl;
+        return 0;
+    }
+    cout<<ans;
     return 0;   
 }
