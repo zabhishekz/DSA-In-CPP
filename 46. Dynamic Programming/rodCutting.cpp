@@ -2,19 +2,6 @@
 #include<climits>
 using namespace std;
 
-//Bottom Up DP
-int max_profit_dp(int *prices, int n){
-    int dp[n+1];
-    dp[0] = 0;
-    for(int len = 1; len <= n; len++){
-        int ans = INT_MIN;
-        for(int i = 1; i <= len; i++){
-            ans = max(ans, prices[i-1] + dp[len-i]);
-        }
-        dp[len] = ans;
-    }
-    return dp[n];
-}
 
 //Recursive Solution
 int max_profit(int prices[], int n){
@@ -27,6 +14,22 @@ int max_profit(int prices[], int n){
     }
     return ans;
 }
+
+//Bottom Up DP
+int max_profit_dp(int *prices, int n){
+    int dp[n+1];
+    dp[0] = 0;
+
+    for(int i = 1; i <= n; i++){
+        int ans = INT_MIN;
+        for(int j = 0; j < i; j++){
+            ans = max(ans, prices[j] + dp[i-j-1]);
+        }
+        dp[i] = ans;
+    }
+    return dp[n];
+}
+
 
 
 int main(){
